@@ -1,50 +1,726 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import '../styles/global.css';
+
+const stats = [
+  { value: "$173M", label: "ACV unlocked via Hyperforce expansion" },
+  { value: "60%", label: "reduction in deployment times" },
+  { value: "50M+", label: "users supported (Second Life, Heroku, MuleSoft)" },
+  { value: "20+", label: "years in production systems" },
+];
+
+const experience = [
+  {
+    title: "Principal Site Reliability Engineer / PMTS",
+    company: "MuleSoft (Salesforce)",
+    period: "Feb 2021 – Present",
+    description: "The world's #1 integration and API platform. $5B ARR, ~10,000 employees.",
+    highlights: [
+      "Led Hyperforce expansion to Japan and Canada, achieving SOC, ISO, and PCI compliance — unlocking $173M in ACV across regulated markets",
+      "Architected phased migration using the Strangler Facade pattern with 99.9% SLA, leading a 2-engineer team",
+      "Developed Terraform pipeline cutting EKS cluster deployment time by 30%; built Golang/Python test suites eliminating previously untestable code",
+      "Redesigned Golang-based deployment pipeline using Kubernetes, Postgres, and Argo Workflows",
+      "Introduced IAM security automation framework within a Zero-Trust architecture, simplifying compliance audits",
+    ],
+  },
+  {
+    title: "Senior Site Reliability Engineer",
+    company: "Heroku (Salesforce)",
+    period: "Feb 2014 – Mar 2021",
+    description: "Leading PaaS provider, core to Salesforce's multi-billion-dollar revenue stream.",
+    highlights: [
+      "Established the SRE group as the first external hire — built incident response, RCA, and on-call culture from the ground up",
+      "Rebuilt status.heroku.com from scratch using Ruby on Rails, improving customer visibility and incident response speed",
+      "Developed Ruby compliance data management framework reducing security access risk by 90%",
+      "Achieved 100% monitoring adoption across all service teams (Nagios, Splunk, bespoke synthetic monitoring)",
+      "Built internal sitrep system used during major incidents across engineering and support",
+    ],
+  },
+  {
+    title: "Cloud Systems Engineer",
+    company: "Audax Health (Optum / UnitedHealth Group)",
+    period: "Jul 2012 – Feb 2014",
+    description: "Digital health and gamification platform, acquired by Optum.",
+    highlights: [
+      "First fully remote Cloud Systems Engineer on the team, reporting directly to Director of Operations",
+      "Automated AWS deployments with Puppet and Chef, reducing setup times by 20%+",
+      "Deployed and maintained ELK stack for real-time logging and operational visibility",
+      "Migrated infrastructure bootstrapping from Puppet to Chef, improving configuration consistency",
+    ],
+  },
+  {
+    title: "Services Engineer",
+    company: "Canonical",
+    period: "Jan 2012 – Jul 2012",
+    description: "Commercial Ubuntu and OpenStack support, $150M+ revenue.",
+    highlights: [
+      "Delivered Ubuntu/OpenStack deployments via Canonical's Jumpstart program, reducing client deployment time by 15%",
+      "Provided on-site integration guidance across client infrastructure (50% travel)",
+    ],
+  },
+  {
+    title: "Systems Engineer",
+    company: "Linden Lab (Second Life)",
+    period: "Feb 2007 – Jan 2012",
+    description: "Creator of Second Life — a virtual world with 50M+ registered users.",
+    highlights: [
+      "Managed colocation infrastructure targeting 99.9% uptime for 50M+ users",
+      "Administered 1,000+ Linux servers powering 30,000+ virtual simulators",
+      "Managed critical services: DHCP/DNS, server imaging, email, monitoring",
+      "Transitioned to fully remote role while maintaining seamless operational continuity",
+    ],
+  },
+  {
+    title: "Director of IT",
+    company: "Destination Hotels & Resorts",
+    period: "Jul 2006 – Feb 2007",
+    description: "40+ property luxury hotel brand, $500M annual revenue.",
+    highlights: [
+      "Led all IT operations for Lake Tahoe resort including Windows infrastructure, network, and vendor management",
+      "Designed and implemented point-to-point Wi-Fi network between hotel and service buildings",
+    ],
+  },
+  {
+    title: "Systems Administrator",
+    company: "Porter Novelli (Omnicom Group)",
+    period: "Aug 2005 – Aug 2006",
+    description: "Global PR agency, subsidiary of Omnicom.",
+    highlights: [
+      "Managed network operations across 4 offices supporting 150+ users, reporting to the CIO",
+      "Led Sarbanes-Oxley compliance initiatives and managed IT product testing lab",
+    ],
+  },
+  {
+    title: "Systems Administrator",
+    company: "Whiteman Osterman & Hanna LLP",
+    period: "Jul 2003 – Aug 2005",
+    description: "Leading Albany, NY law firm.",
+    highlights: [
+      "Managed LAN/WAN infrastructure, thin client network, and SQL billing systems",
+      "Implemented Linux-based spam solution and managed help desk staff",
+    ],
+  },
+];
+
+const projects = [
+  {
+    name: "LedgerWatchdog",
+    tagline: "AI-powered billing intelligence",
+    description: "An agentic AI platform in active development that analyzes invoices and financial documents to detect duplicate charges, suspicious transactions, and tax write-off opportunities. Currently in alpha — built to prove out the detection pipeline before onboarding customers.",
+    stats: ["Alpha", "In development"],
+    tech: ["Python", "AI/LLM", "FastAPI", "PostgreSQL"],
+    url: "https://ledgerwatchdog-web.onrender.com/",
+    github: "https://github.com/joshuatobin/ledger-watchdog",
+  },
+  {
+    name: "Winona Camps ADK",
+    tagline: "Historic property showcase & real estate marketing",
+    description: "A personal project showcasing the history and character of The Winona Camps — a historic Adirondack property at Big Moose Station that I own. Built as both an archival showcase and a marketing platform ahead of sale.",
+    stats: [],
+    tech: ["Node.js", "Web"],
+    url: "https://winona-camps-adk.onrender.com/",
+    github: "https://github.com/joshuatobin/winonacampsadk",
+  },
+  {
+    name: "AlpineRoster",
+    tagline: "Team and roster management",
+    description: "An application for managing alpine team rosters and member coordination.",
+    stats: [],
+    tech: ["Web"],
+    url: null,
+    github: "https://github.com/joshuatobin/AlpineRoster",
+  },
+];
+
+const skills = [
+  { category: "Cloud & Infrastructure", items: ["AWS (EKS, S3, Lambda, RDS)", "GCP", "Kubernetes", "Docker", "ECS"] },
+  { category: "Infrastructure as Code", items: ["Terraform", "CloudFormation", "Puppet", "Chef"] },
+  { category: "CI/CD & Automation", items: ["ArgoCD", "Argo Workflows", "CircleCI", "Jenkins"] },
+  { category: "Languages", items: ["Python", "Golang", "Ruby", "Bash", "Node.js"] },
+  { category: "Observability", items: ["Prometheus", "Grafana", "ELK Stack", "Splunk", "Nagios"] },
+  { category: "Security & Compliance", items: ["Zero Trust / IAM", "SOC 2", "ISO 27001", "PCI DSS", "FedRAMP", "SOX"] },
+];
 ---
 
-<!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to <a href="https://docs.astro.build/"
-					>read the docs
-				</a> or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out <a
-					href="https://github.com/Charca/astro-blog-template"
-					>astro-blog-template
-				</a> by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content="Joshua Tobin — Principal Engineer with 20+ years in cloud-native infrastructure, distributed systems, and AI-native tooling." />
+    <title>Joshua Tobin — Principal Engineer | joshuatobin.ai</title>
+    <link rel="canonical" href="https://joshuatobin.ai" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --brand: #00d4ff;
+        --brand-dim: #0099bb;
+        --bg: #0a0e14;
+        --surface: #0f1520;
+        --surface-2: #111827;
+        --border: #1e2d40;
+        --muted: #4a6480;
+        --text: #c9d6e3;
+        --text-dim: #7a99b8;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Inter', system-ui, sans-serif;
+        line-height: 1.6;
+      }
+      ::-webkit-scrollbar { width: 5px; }
+      ::-webkit-scrollbar-track { background: var(--bg); }
+      ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+      /* Nav */
+      nav {
+        position: fixed; top: 0; width: 100%; z-index: 100;
+        background: rgba(10,14,20,0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 2rem;
+        height: 56px;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      nav .logo {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.875rem;
+        color: var(--brand);
+        text-decoration: none;
+      }
+      nav ul { list-style: none; display: flex; gap: 2rem; }
+      nav a {
+        color: var(--text-dim);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+      nav a:hover { color: var(--brand); }
+
+      /* Sections */
+      section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+      .section-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--brand);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #e8f0f8;
+        margin-bottom: 3rem;
+        line-height: 1.2;
+      }
+
+      /* Hero */
+      #hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 7rem 2rem 4rem;
+      }
+      .hero-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+        color: var(--brand);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        display: flex; align-items: center; gap: 0.75rem;
+      }
+      .hero-label::before {
+        content: '';
+        width: 32px; height: 1px;
+        background: var(--brand);
+      }
+      h1 {
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        font-weight: 700;
+        color: #e8f0f8;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        margin-bottom: 1.5rem;
+      }
+      h1 span { color: var(--brand); }
+      .hero-sub {
+        font-size: 1.15rem;
+        color: var(--text-dim);
+        max-width: 620px;
+        line-height: 1.7;
+        margin-bottom: 2.5rem;
+      }
+      .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+      .btn-primary {
+        background: var(--brand);
+        color: #0a0e14;
+        padding: 0.75rem 1.75rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: opacity 0.2s;
+      }
+      .btn-primary:hover { opacity: 0.85; }
+      .btn-secondary {
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 0.75rem 1.75rem;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: border-color 0.2s, color 0.2s;
+      }
+      .btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
+
+      /* Stats */
+      #stats {
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: 3.5rem 2rem;
+      }
+      .stats-grid {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 2rem;
+      }
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.75rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--brand), transparent);
+      }
+      .stat-value {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--brand);
+        font-family: 'JetBrains Mono', monospace;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+      }
+      .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        line-height: 1.4;
+      }
+
+      /* About */
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: start;
+      }
+      @media (max-width: 768px) { .about-grid { grid-template-columns: 1fr; gap: 2rem; } }
+      .about-text p {
+        color: var(--text-dim);
+        margin-bottom: 1rem;
+        line-height: 1.8;
+      }
+      .about-text p:last-child { margin-bottom: 0; }
+      .about-text strong { color: var(--text); }
+      .about-callout {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--brand);
+        border-radius: 8px;
+        padding: 1.5rem;
+      }
+      .about-callout p {
+        font-size: 0.95rem;
+        color: var(--text-dim);
+        line-height: 1.7;
+      }
+      .about-callout strong { color: var(--brand); }
+
+      /* Experience */
+      .exp-list { display: flex; flex-direction: column; gap: 1.5rem; }
+      .exp-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 2rem;
+        transition: border-color 0.2s;
+      }
+      .exp-card:hover { border-color: var(--brand); }
+      .exp-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
+      }
+      .exp-title { font-size: 1.05rem; font-weight: 600; color: #e8f0f8; }
+      .exp-period {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--brand);
+        background: rgba(0, 212, 255, 0.08);
+        padding: 0.25rem 0.75rem;
+        border-radius: 99px;
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        white-space: nowrap;
+      }
+      .exp-company { font-size: 0.9rem; color: var(--muted); margin-bottom: 0.5rem; }
+      .exp-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; font-style: italic; }
+      .exp-highlights { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+      .exp-highlights li {
+        font-size: 0.875rem;
+        color: var(--text-dim);
+        padding-left: 1.25rem;
+        position: relative;
+        line-height: 1.6;
+      }
+      .exp-highlights li::before {
+        content: '▹';
+        position: absolute; left: 0;
+        color: var(--brand);
+      }
+
+      /* Projects */
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+      .project-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        transition: border-color 0.2s, transform 0.2s;
+      }
+      .project-card:hover { border-color: var(--brand); transform: translateY(-2px); }
+      .project-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #e8f0f8;
+      }
+      .project-tagline {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--brand);
+        letter-spacing: 0.08em;
+      }
+      .project-desc {
+        font-size: 0.875rem;
+        color: var(--text-dim);
+        line-height: 1.7;
+        flex: 1;
+      }
+      .project-stats { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      .project-stat {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        background: rgba(0, 212, 255, 0.1);
+        color: var(--brand);
+        border: 1px solid rgba(0, 212, 255, 0.25);
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+      }
+      .project-tech { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      .tech-tag {
+        font-size: 0.75rem;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+      }
+      .project-links { display: flex; gap: 1rem; }
+      .project-link {
+        font-size: 0.8rem;
+        color: var(--brand);
+        text-decoration: none;
+        font-weight: 500;
+        transition: opacity 0.2s;
+      }
+      .project-link:hover { opacity: 0.7; }
+
+      /* Skills */
+      .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.25rem;
+      }
+      .skill-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+      }
+      .skill-category {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--brand);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 1rem;
+        font-family: 'JetBrains Mono', monospace;
+      }
+      .skill-items { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      .skill-item {
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+      }
+
+      /* Contact */
+      #contact {
+        border-top: 1px solid var(--border);
+        text-align: center;
+        padding: 5rem 2rem;
+      }
+      #contact h2 { margin-bottom: 1rem; }
+      #contact p {
+        color: var(--text-dim);
+        max-width: 480px;
+        margin: 0 auto 2.5rem;
+        line-height: 1.7;
+      }
+      .contact-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+      .contact-link {
+        display: flex; align-items: center; gap: 0.5rem;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: border-color 0.2s, color 0.2s;
+      }
+      .contact-link:hover { border-color: var(--brand); color: var(--brand); }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 2rem;
+        border-top: 1px solid var(--border);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      @media (max-width: 640px) {
+        nav ul { display: none; }
+        h1 { font-size: 2.2rem; }
+        .hero-actions { flex-direction: column; }
+        .hero-actions a { text-align: center; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- NAV -->
+    <nav>
+      <a href="#hero" class="logo">joshuatobin.ai</a>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- HERO -->
+    <div id="hero">
+      <div class="hero-label">Available for senior & principal roles</div>
+      <h1>Joshua Tobin<br /><span>Principal Engineer</span></h1>
+      <p class="hero-sub">
+        20+ years building and operating production systems at scale — from Second Life's virtual world
+        to Heroku's PaaS to MuleSoft's global compliance infrastructure. Now designing AI-native tools
+        for the next era of distributed systems.
+      </p>
+      <div class="hero-actions">
+        <a href="#experience" class="btn-primary">View Experience</a>
+        <a href="#contact" class="btn-secondary">Get in Touch</a>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div id="stats">
+      <div class="stats-grid">
+        {stats.map(s => (
+          <div class="stat-card">
+            <div class="stat-value">{s.value}</div>
+            <div class="stat-label">{s.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="section-label">// about</div>
+      <h2>From colocation to cloud-native<br />to agentic AI</h2>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            I've been in the engine room for over two decades. I've managed <strong>1,000+ Linux servers</strong>
+            supporting Second Life's 50 million users, built SRE culture at Heroku from the ground up as
+            the first external hire, and led the compliance engineering that unlocked <strong>$173M in ACV</strong>
+            for MuleSoft's regulated market expansion.
+          </p>
+          <p>
+            My edge isn't just the tenure — it's the breadth. I can write Terraform, debug a Kubernetes scheduler,
+            build a Golang test suite, and lead a cross-functional incident response. I've operated
+            at every layer of the stack, which means I design systems that actually survive contact with production.
+          </p>
+          <p>
+            Today I'm building AI-native tools — applying the same automation mindset I've carried for 20 years
+            to the agentic era. <strong>Always be shipping.</strong> LedgerWatchdog is my current focus: an agentic
+            billing intelligence platform in active development, purpose-built to keep my AI engineering skills sharp
+            and prove out detection pipelines at scale.
+          </p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="about-callout">
+            <p>
+              <strong>The agentic era needs engineers who understand production.</strong><br /><br />
+              AI agents fail in the same ways distributed systems fail — at scale, under load, at the edges.
+              I know how to build the infrastructure that makes them reliable.
+            </p>
+          </div>
+          <div class="about-callout">
+            <p>
+              <strong>Location:</strong> Ballston Spa, NY (fully remote since 2012)<br />
+              <strong>Education:</strong> B.T. in CIS — SUNY Cobleskill, 2003<br />
+              <strong>Currently:</strong> Principal SRE at MuleSoft / Salesforce
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <div class="section-label">// experience</div>
+      <h2>Where I've built things</h2>
+      <div class="exp-list">
+        {experience.map(job => (
+          <div class="exp-card">
+            <div class="exp-header">
+              <div class="exp-title">{job.title}</div>
+              <div class="exp-period">{job.period}</div>
+            </div>
+            <div class="exp-company">{job.company}</div>
+            <div class="exp-desc">{job.description}</div>
+            <ul class="exp-highlights">
+              {job.highlights.map(h => (
+                <li>{h}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <div class="section-label">// projects</div>
+      <h2>What I've been building</h2>
+      <div class="projects-grid">
+        {projects.map(p => (
+          <div class="project-card">
+            <div>
+              <div class="project-tagline">{p.tagline}</div>
+              <div class="project-name">{p.name}</div>
+            </div>
+            <p class="project-desc">{p.description}</p>
+            {p.stats.length > 0 && (
+              <div class="project-stats">
+                {p.stats.map(s => <span class="project-stat">{s}</span>)}
+              </div>
+            )}
+            <div class="project-tech">
+              {p.tech.map(t => <span class="tech-tag">{t}</span>)}
+            </div>
+            <div class="project-links">
+              {p.url && <a href={p.url} target="_blank" rel="noopener" class="project-link">↗ Live</a>}
+              {p.github && <a href={p.github} target="_blank" rel="noopener" class="project-link">GitHub</a>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="section-label">// skills</div>
+      <h2>Technical stack</h2>
+      <div class="skills-grid">
+        {skills.map(s => (
+          <div class="skill-card">
+            <div class="skill-category">{s.category}</div>
+            <div class="skill-items">
+              {s.items.map(item => <span class="skill-item">{item}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <div id="contact">
+      <div class="section-label">// contact</div>
+      <h2>Let's talk</h2>
+      <p>
+        Looking for senior, principal, or staff-level engineering roles in cloud infrastructure,
+        platform engineering, or AI systems. Open to full-time and contract.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:joshuatobin@gmail.com" class="contact-link">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+          joshuatobin@gmail.com
+        </a>
+        <a href="https://linkedin.com/in/joshuamtobin/" target="_blank" rel="noopener" class="contact-link">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/joshuatobin" target="_blank" rel="noopener" class="contact-link">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub
+        </a>
+        <a href="tel:5184909010" class="contact-link">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          518-490-9010
+        </a>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <span>© 2025 Joshua Tobin · joshuatobin.ai · Built with Astro</span>
+    </footer>
+
+  </body>
 </html>
